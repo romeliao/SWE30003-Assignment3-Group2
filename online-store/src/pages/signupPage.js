@@ -1,11 +1,13 @@
-// ...existing code...
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate, Link } from "react-router-dom";
 
 export default function Signup() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [emailValid, setEmailValid] = useState(false);
+  const [phone, setPhone] = useState("");
+  const [phoneValid, setPhoneValid] = useState(false);
+  const [address, setAddress] = useState("");
   const [password, setPassword] = useState("");
   const [passwordValid, setPasswordValid] = useState(false);
   const [checks, setChecks] = useState({
@@ -17,6 +19,7 @@ export default function Signup() {
   });
 
   const navigate = useNavigate();
+  const formRef = useRef(null);
 
   useEffect(() => {
     // disable body scrolling while on the auth page
@@ -26,7 +29,7 @@ export default function Signup() {
     };
   }, []);
 
-  //password validation function
+  // password validation function
   const validatePassword = (pw) => {
     const rules = {
       length: pw.length >= 8,
@@ -49,26 +52,53 @@ export default function Signup() {
     validatePassword(pw);
   };
 
-  //email validation function
+  // email validation function
   const validateEmail = (em) => {
     const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     setEmailValid(re.test(String(em).toLowerCase()));
-  }
+  };
 
   const handleEmailChange = (e) => {
     const em = e.target.value;
     setEmail(em);
     validateEmail(em);
-  }
+  };
 
+  // phone validation (basic): allows digits, spaces, +, -, parentheses; min 7 digits
+  const validatePhone = (ph) => {
+    const digitsOnly = ph.replace(/\D/g, "");
+    const re = /^[\d+\-\s()]+$/;
+    setPhoneValid(re.test(ph) && digitsOnly.length >= 7);
+  };
+
+  const handlePhoneChange = (e) => {
+    const ph = e.target.value;
+    setPhone(ph);
+    validatePhone(ph);
+  };
+
+  // address handler
+  const handleAddressChange = (e) => {
+    setAddress(e.target.value);
+  };
+
+  // submit button handler
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("submit", { name, email, passwordValid, checks }); // debug
-    if (!name || !email || !password) return alert("Please fill all required fields");
+
+    // show native browser validation tooltips for required fields
+    if (formRef.current && !formRef.current.reportValidity()) return;
+
+    console.log("submit", { name, email, phone, address, passwordValid, checks }); // debug
+    if (!name || !email || !phone || !address || !password) return alert("Please fill all required fields");
     if (!emailValid) return alert("Please enter a valid email address");
+    if (!phoneValid) return alert("Please enter a valid phone number");
     if (!passwordValid) return alert("Password does not meet requirements");
-    const user = { name, email };
+
+    // save user (do not store password)
+    const user = { name, email, phone, address };
     localStorage.setItem("user", JSON.stringify(user));
+
     alert("Account created");
     navigate("/login");
   };
@@ -84,7 +114,8 @@ export default function Signup() {
       <div className="auth-card">
         <h2 className="auth-title">Sign Up</h2>
 
-        <form onSubmit={handleSubmit} className="auth-form" aria-label="Sign up form">
+        {/* name field */}
+        <form ref={formRef} onSubmit={handleSubmit} className="auth-form" aria-label="Sign up form">
           <input
             className="auth-input"
             name="name"
@@ -97,6 +128,7 @@ export default function Signup() {
             aria-label="Full name"
           />
 
+          {/* email input with validation */}
           <input
             className="auth-input"
             name="email"
@@ -118,6 +150,42 @@ export default function Signup() {
             ) : null}
           </div>
           
+          {/* phone input with validation */}
+          <input
+            className="auth-input"
+            name="phone"
+            type="tel"
+            autoComplete="tel"
+            placeholder="Phone number"
+            value={phone}
+            onChange={handlePhoneChange}
+            required
+            aria-label="Phone number"
+          />
+
+          {/* phone number validation */}
+          <div style={{ textAlign: "left", marginTop: 6, fontSize: 13 }}>
+            {phone ? (
+              <span style={{ color: phoneValid ? "#1e7e34" : "#c82333", fontWeight: 600 }}>
+                {phoneValid ? "Valid phone number" : "Invalid phone number format"}
+              </span>
+            ) : null}
+          </div>
+
+          {/* address field */}
+          <textarea
+            className="auth-input"
+            name="address"
+            autoComplete="street-address"
+            placeholder="Address"
+            value={address}
+            onChange={handleAddressChange}
+            required
+            aria-label="Address"
+            style={{ minHeight: 80, resize: "vertical", marginTop: 8 }}
+          />
+
+          {/* password field */}
           <input
             className="auth-input"
             name="password"
