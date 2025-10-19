@@ -1,4 +1,3 @@
-// ...existing code...
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
@@ -16,14 +15,35 @@ export default function LoginPage() {
     };
   }, []);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (email && password) {
-      localStorage.setItem("user", JSON.stringify({ email }));
-      alert("Logged in");
+
+    if (!email || !password) {
+      return alert("Please enter email and password");
+    }
+
+    try {
+      const response = await fetch("http://localhost:5000/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        return alert(data.error || "Login failed");
+      }
+
+      // Save token and user
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("user", JSON.stringify(data.user));
+
+      alert("Logged in successfully!");
       navigate("/catalogue");
-    } else {
-      alert("Please enter valid credentials");
+    } catch (error) {
+      console.error("Login error:", error);
+      alert("Failed to login. Please check if the backend server is running.");
     }
   };
 

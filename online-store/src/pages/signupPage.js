@@ -83,7 +83,7 @@ export default function Signup() {
   };
 
   // submit button handler
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     // show native browser validation tooltips for required fields
@@ -95,12 +95,29 @@ export default function Signup() {
     if (!phoneValid) return alert("Please enter a valid phone number");
     if (!passwordValid) return alert("Password does not meet requirements");
 
-    // save user (do not store password)
-    const user = { name, email, phone, address };
-    localStorage.setItem("user", JSON.stringify(user));
+    try {
+      const response = await fetch("http://localhost:5000/api/auth/signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, email, phone, address, password }),
+      });
 
-    alert("Account created");
-    navigate("/login");
+      const data = await response.json();
+
+      if (!response.ok) {
+        return alert(data.error || "Signup failed");
+      }
+
+      // Save token and user
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("user", JSON.stringify(data.user));
+
+      alert("Account created successfully!");
+      navigate("/login");
+    } catch (error) {
+      console.error("Signup error:", error);
+      alert("Failed to create account. Please check if the backend server is running.");
+    }
   };
 
   const indicator = (ok) => ({

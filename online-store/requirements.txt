@@ -1,0 +1,12 @@
+//frontend
+run npm install for frontend dependencies
+run npm install react-router-dom
+
+
+//backend
+Step 2: Initialize Node.js Project 
+npm init -y
+
+Step 3: Install Dependencies
+npm install express cors bcryptjs jsonwebtoken dotenv body-parser
+npm install --save-dev nodemon
