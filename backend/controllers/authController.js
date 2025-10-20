@@ -54,12 +54,15 @@ const writeResetTokens = async (tokens) => {
 // Signup
 exports.signup = async (req, res) => {
   try {
-    const { name, email, phone, address, password } = req.body;
+    const { name, email, phone, address, password, role } = req.body;
 
     // Validation
     if (!name || !email || !phone || !address || !password) {
       return res.status(400).json({ error: "All fields are required" });
     }
+
+    // Validate role (default to customer if not provided or invalid)
+    const userRole = role === "staff" ? "staff" : "customer";
 
     // Read existing users
     const users = await readUsers();
@@ -81,16 +84,20 @@ exports.signup = async (req, res) => {
       phone,
       address,
       password: hashedPassword,
+      role: userRole,
       createdAt: new Date().toISOString(),
     };
 
     users.push(newUser);
     await writeUsers(users);
 
-    // Generate token
-    const token = jwt.sign({ id: newUser.id, email: newUser.email }, JWT_SECRET, {
-      expiresIn: "7d",
-    });
+
+    // Generate token with role
+    const token = jwt.sign(
+      { id: newUser.id, email: newUser.email, role: newUser.role },
+      JWT_SECRET,
+      { expiresIn: "7d" }
+    );
 
     // Return user without password
     const { password: _, ...userWithoutPassword } = newUser;
@@ -106,7 +113,7 @@ exports.signup = async (req, res) => {
   }
 };
 
-// Login
+/// Login
 exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -128,10 +135,12 @@ exports.login = async (req, res) => {
       return res.status(401).json({ error: "Invalid credentials" });
     }
 
-    // Generate token
-    const token = jwt.sign({ id: user.id, email: user.email }, JWT_SECRET, {
-      expiresIn: "7d",
-    });
+    // Generate token with role
+    const token = jwt.sign(
+      { id: user.id, email: user.email, role: user.role },
+      JWT_SECRET,
+      { expiresIn: "7d" }
+    );
 
     const { password: _, ...userWithoutPassword } = user;
 
@@ -210,43 +219,36 @@ exports.forgotPassword = async (req, res) => {
     const user = users.find((u) => u.email === email);
 
     if (!user) {
-      // Don't reveal if user exists for security
-      return res.status(200).json({ 
-        message: "If an account with that email exists, reset instructions have been sent." 
-      });
+      // Don't reveal if email exists or not for security
+      return res.json({ message: "If the email exists, a reset link has been sent" });
     }
 
     // Generate reset token
     const resetToken = crypto.randomBytes(32).toString("hex");
-    const resetTokenExpiry = Date.now() + 3600000; // 1 hour from now
+    const hashedToken = crypto.createHash("sha256").update(resetToken).digest("hex");
 
-    // Store reset token
-    const resetTokens = await readResetTokens();
-    const existingTokenIndex = resetTokens.findIndex((t) => t.email === email);
-    
-    if (existingTokenIndex > -1) {
-      // Update existing token
-      resetTokens[existingTokenIndex] = {
-        email,
-        token: resetToken,
-        expiry: resetTokenExpiry,
-      };
-    } else {
-      // Add new token
-      resetTokens.push({
-        email,
-        token: resetToken,
-        expiry: resetTokenExpiry,
-      });
-    }
+    // Store token with expiration (1 hour)
+    const tokens = await readResetTokens();
+    const tokenData = {
+      email: user.email,
+      token: hashedToken,
+      expiresAt: Date.now() + 3600000, // 1 hour
+      createdAt: new Date().toISOString(),
+    };
 
-    await writeResetTokens(resetTokens);
+    // Remove any existing tokens for this email
+    const filteredTokens = tokens.filter((t) => t.email !== user.email);
+    filteredTokens.push(tokenData);
+    await writeResetTokens(filteredTokens);
 
-    // In production, you would send an email here
-    // For now, we'll return the token (NOT secure for production)
-    res.json({
-      message: "Reset instructions sent to your email",
-      resetToken, // Remove this in production
+    // In production, send email here
+    console.log("Reset token:", resetToken);
+    console.log("Reset URL:", `http://localhost:3000/reset-password?token=${resetToken}`);
+
+    res.json({ 
+      message: "If the email exists, a reset link has been sent",
+      // Remove this in production - only for development
+      resetToken: resetToken 
     });
   } catch (error) {
     console.error("Forgot password error:", error);
@@ -263,42 +265,35 @@ exports.resetPassword = async (req, res) => {
       return res.status(400).json({ error: "Token and new password are required" });
     }
 
-    // Find reset token
-    const resetTokens = await readResetTokens();
-    const resetTokenIndex = resetTokens.findIndex((t) => t.token === token);
+    // Hash the token to compare
+    const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
 
-    if (resetTokenIndex === -1) {
-      return res.status(400).json({ error: "Invalid or expired reset token" });
+    // Find valid token
+    const tokens = await readResetTokens();
+    const tokenData = tokens.find(
+      (t) => t.token === hashedToken && t.expiresAt > Date.now()
+    );
+
+    if (!tokenData) {
+      return res.status(400).json({ error: "Invalid or expired token" });
     }
 
-    const resetTokenData = resetTokens[resetTokenIndex];
-
-    // Check if token is expired
-    if (Date.now() > resetTokenData.expiry) {
-      // Remove expired token
-      resetTokens.splice(resetTokenIndex, 1);
-      await writeResetTokens(resetTokens);
-      return res.status(400).json({ error: "Reset token has expired" });
-    }
-
-    // Find user and update password
+    // Update password
     const users = await readUsers();
-    const userIndex = users.findIndex((u) => u.email === resetTokenData.email);
+    const userIndex = users.findIndex((u) => u.email === tokenData.email);
 
     if (userIndex === -1) {
       return res.status(404).json({ error: "User not found" });
     }
 
-    // Hash new password
     const hashedPassword = await bcrypt.hash(newPassword, 10);
     users[userIndex].password = hashedPassword;
     users[userIndex].updatedAt = new Date().toISOString();
-
     await writeUsers(users);
 
     // Remove used token
-    resetTokens.splice(resetTokenIndex, 1);
-    await writeResetTokens(resetTokens);
+    const filteredTokens = tokens.filter((t) => t.token !== hashedToken);
+    await writeResetTokens(filteredTokens);
 
     res.json({ message: "Password reset successfully" });
   } catch (error) {

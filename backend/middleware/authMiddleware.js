@@ -18,3 +18,19 @@ exports.verifyToken = (req, res, next) => {
     return res.status(401).json({ error: "Invalid token" });
   }
 };
+
+// Check if user is staff
+exports.isStaff = (req, res, next) => {
+  if (req.userRole !== "staff") {
+    return res.status(403).json({ error: "Access denied. Staff only." });
+  }
+  next();
+};
+
+// Check if user is customer
+exports.isCustomer = (req, res, next) => {
+  if (req.userRole !== "customer") {
+    return res.status(403).json({ error: "Access denied. Customers only." });
+  }
+  next();
+};

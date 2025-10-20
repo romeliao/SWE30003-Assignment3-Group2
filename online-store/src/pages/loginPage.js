@@ -41,7 +41,13 @@ export default function LoginPage() {
       localStorage.setItem("user", JSON.stringify(data.user));
 
       alert("Logged in successfully!");
-      navigate("/catalogue");
+      
+      // Redirect based on role
+      if (data.user.role === "staff") {
+        navigate("/staff/dashboard");
+      } else {
+        navigate("/catalogue");
+      }
     } catch (error) {
       console.error("Login error:", error);
       alert("Failed to login. Please check if the backend server is running.");
