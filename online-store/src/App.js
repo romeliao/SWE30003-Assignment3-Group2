@@ -4,6 +4,8 @@ import Navbar from "./components/navBar";
 import CataloguePage from "./pages/cataloguePage";
 import LoginPage from "./pages/loginPage";
 import Signup from "./pages/signupPage";
+import ForgotPasswordPage from "./pages/forgotPasswordPage";
+import ResetPasswordPage from "./pages/resetPasswordPage";
 
 
 function App() {
@@ -16,6 +18,8 @@ function App() {
           <Route path="/catalogue" element={<CataloguePage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/signup" element={<Signup />} />
+          <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+          <Route path="/reset-password" element={<ResetPasswordPage />} />
         </Routes>
       </div>
     </Router>

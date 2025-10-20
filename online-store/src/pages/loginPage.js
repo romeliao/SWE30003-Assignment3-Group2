@@ -4,6 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false); 
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -61,18 +62,37 @@ export default function LoginPage() {
             onChange={(e) => setEmail(e.target.value)}
             required
           />
-          <input
-            className="auth-input"
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
+          {/*password with toggle show button*/}
+          <div style={{ display: "flex", gap: 8 }}>
+            <input
+              className="auth-input"
+              type={showPassword ? "text" : "password"}
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              aria-label="Password"
+              style={{ flex: 1 }}
+            />
+            <button
+              type="button"
+              className="btn"
+              onClick={() => setShowPassword((s) => !s)}
+              aria-label={showPassword ? "Hide password" : "Show password"}
+            >
+              {showPassword ? "Hide" : "Show"}
+            </button>
+          </div>
 
           <button className="btn primary" type="submit">
             Login
           </button>
+
+          <p style={{ textAlign: "center", marginTop: 12, fontSize: 14 }}>
+            <Link to="/forgot-password" style={{ color: "#007bff", textDecoration: "none" }}>
+              Forgot Password?
+            </Link>
+          </p>
         </form>
 
         <p className="auth-footer" style={{ marginTop: 12 }}>

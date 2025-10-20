@@ -2,8 +2,10 @@ const fs = require("fs").promises;
 const path = require("path");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const crypto = require("crypto");
 
 const USERS_FILE = path.join(__dirname, "../data/users.json");
+const RESET_TOKENS_FILE = path.join(__dirname, "../data/resetTokens.json");
 const JWT_SECRET = process.env.JWT_SECRET || "your-secret-key-change-in-production";
 
 // Helper: Read users from file
@@ -26,6 +28,27 @@ const writeUsers = async (users) => {
     await fs.mkdir(dir, { recursive: true });
   }
   await fs.writeFile(USERS_FILE, JSON.stringify(users, null, 2));
+};
+
+// Helper: Read reset tokens from file
+const readResetTokens = async () => {
+  try {
+    const data = await fs.readFile(RESET_TOKENS_FILE, "utf8");
+    return JSON.parse(data);
+  } catch (error) {
+    return [];
+  }
+};
+
+// Helper: Write reset tokens to file
+const writeResetTokens = async (tokens) => {
+  const dir = path.dirname(RESET_TOKENS_FILE);
+  try {
+    await fs.access(dir);
+  } catch {
+    await fs.mkdir(dir, { recursive: true });
+  }
+  await fs.writeFile(RESET_TOKENS_FILE, JSON.stringify(tokens, null, 2));
 };
 
 // Signup
@@ -170,6 +193,116 @@ exports.updateUser = async (req, res) => {
     });
   } catch (error) {
     console.error("Update user error:", error);
+    res.status(500).json({ error: "Server error" });
+  }
+};
+
+// Forgot Password - Generate reset token
+exports.forgotPassword = async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    if (!email) {
+      return res.status(400).json({ error: "Email is required" });
+    }
+
+    const users = await readUsers();
+    const user = users.find((u) => u.email === email);
+
+    if (!user) {
+      // Don't reveal if user exists for security
+      return res.status(200).json({ 
+        message: "If an account with that email exists, reset instructions have been sent." 
+      });
+    }
+
+    // Generate reset token
+    const resetToken = crypto.randomBytes(32).toString("hex");
+    const resetTokenExpiry = Date.now() + 3600000; // 1 hour from now
+
+    // Store reset token
+    const resetTokens = await readResetTokens();
+    const existingTokenIndex = resetTokens.findIndex((t) => t.email === email);
+    
+    if (existingTokenIndex > -1) {
+      // Update existing token
+      resetTokens[existingTokenIndex] = {
+        email,
+        token: resetToken,
+        expiry: resetTokenExpiry,
+      };
+    } else {
+      // Add new token
+      resetTokens.push({
+        email,
+        token: resetToken,
+        expiry: resetTokenExpiry,
+      });
+    }
+
+    await writeResetTokens(resetTokens);
+
+    // In production, you would send an email here
+    // For now, we'll return the token (NOT secure for production)
+    res.json({
+      message: "Reset instructions sent to your email",
+      resetToken, // Remove this in production
+    });
+  } catch (error) {
+    console.error("Forgot password error:", error);
+    res.status(500).json({ error: "Server error" });
+  }
+};
+
+// Reset Password - Use token to reset password
+exports.resetPassword = async (req, res) => {
+  try {
+    const { token, newPassword } = req.body;
+
+    if (!token || !newPassword) {
+      return res.status(400).json({ error: "Token and new password are required" });
+    }
+
+    // Find reset token
+    const resetTokens = await readResetTokens();
+    const resetTokenIndex = resetTokens.findIndex((t) => t.token === token);
+
+    if (resetTokenIndex === -1) {
+      return res.status(400).json({ error: "Invalid or expired reset token" });
+    }
+
+    const resetTokenData = resetTokens[resetTokenIndex];
+
+    // Check if token is expired
+    if (Date.now() > resetTokenData.expiry) {
+      // Remove expired token
+      resetTokens.splice(resetTokenIndex, 1);
+      await writeResetTokens(resetTokens);
+      return res.status(400).json({ error: "Reset token has expired" });
+    }
+
+    // Find user and update password
+    const users = await readUsers();
+    const userIndex = users.findIndex((u) => u.email === resetTokenData.email);
+
+    if (userIndex === -1) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    // Hash new password
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    users[userIndex].password = hashedPassword;
+    users[userIndex].updatedAt = new Date().toISOString();
+
+    await writeUsers(users);
+
+    // Remove used token
+    resetTokens.splice(resetTokenIndex, 1);
+    await writeResetTokens(resetTokens);
+
+    res.json({ message: "Password reset successfully" });
+  } catch (error) {
+    console.error("Reset password error:", error);
     res.status(500).json({ error: "Server error" });
   }
 };

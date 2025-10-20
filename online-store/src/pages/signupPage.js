@@ -9,6 +9,8 @@ export default function Signup() {
   const [phoneValid, setPhoneValid] = useState(false);
   const [address, setAddress] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");     // NEW
+  const [showPasswords, setShowPasswords] = useState(false);      // NEW
   const [passwordValid, setPasswordValid] = useState(false);
   const [checks, setChecks] = useState({
     length: false,
@@ -22,7 +24,6 @@ export default function Signup() {
   const formRef = useRef(null);
 
   useEffect(() => {
-    // disable body scrolling while on the auth page
     document.body.classList.add("no-scroll");
     return () => {
       document.body.classList.remove("no-scroll");
@@ -52,7 +53,7 @@ export default function Signup() {
     validatePassword(pw);
   };
 
-  // email validation function
+  // email validation
   const validateEmail = (em) => {
     const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     setEmailValid(re.test(String(em).toLowerCase()));
@@ -64,7 +65,7 @@ export default function Signup() {
     validateEmail(em);
   };
 
-  // phone validation (basic): allows digits, spaces, +, -, parentheses; min 7 digits
+  // phone validation (basic)
   const validatePhone = (ph) => {
     const digitsOnly = ph.replace(/\D/g, "");
     const re = /^[\d+\-\s()]+$/;
@@ -77,23 +78,19 @@ export default function Signup() {
     validatePhone(ph);
   };
 
-  // address handler
-  const handleAddressChange = (e) => {
-    setAddress(e.target.value);
-  };
+  const handleAddressChange = (e) => setAddress(e.target.value);
 
-  // submit button handler
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // show native browser validation tooltips for required fields
     if (formRef.current && !formRef.current.reportValidity()) return;
 
-    console.log("submit", { name, email, phone, address, passwordValid, checks }); // debug
-    if (!name || !email || !phone || !address || !password) return alert("Please fill all required fields");
+    if (!name || !email || !phone || !address || !password || !confirmPassword)
+      return alert("Please fill all required fields");
     if (!emailValid) return alert("Please enter a valid email address");
     if (!phoneValid) return alert("Please enter a valid phone number");
     if (!passwordValid) return alert("Password does not meet requirements");
+    if (password !== confirmPassword) return alert("Passwords do not match");
 
     try {
       const response = await fetch("http://localhost:5000/api/auth/signup", {
@@ -101,21 +98,16 @@ export default function Signup() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name, email, phone, address, password }),
       });
-
       const data = await response.json();
+      if (!response.ok) return alert(data.error || "Signup failed");
 
-      if (!response.ok) {
-        return alert(data.error || "Signup failed");
-      }
-
-      // Save token and user
       localStorage.setItem("token", data.token);
       localStorage.setItem("user", JSON.stringify(data.user));
 
       alert("Account created successfully!");
       navigate("/login");
-    } catch (error) {
-      console.error("Signup error:", error);
+    } catch (err) {
+      console.error("Signup error:", err);
       alert("Failed to create account. Please check if the backend server is running.");
     }
   };
@@ -126,12 +118,13 @@ export default function Signup() {
     marginLeft: 8,
   });
 
+  const passwordsMatch = confirmPassword && password === confirmPassword;
+
   return (
     <div className="page auth-page">
       <div className="auth-card">
         <h2 className="auth-title">Sign Up</h2>
 
-        {/* name field */}
         <form ref={formRef} onSubmit={handleSubmit} className="auth-form" aria-label="Sign up form">
           <input
             className="auth-input"
@@ -145,7 +138,6 @@ export default function Signup() {
             aria-label="Full name"
           />
 
-          {/* email input with validation */}
           <input
             className="auth-input"
             name="email"
@@ -158,7 +150,6 @@ export default function Signup() {
             aria-label="Email address"
           />
 
-          {/* email validity hint */}
           <div style={{ textAlign: "left", marginTop: 6, fontSize: 13 }}>
             {email ? (
               <span style={{ color: emailValid ? "#1e7e34" : "#c82333", fontWeight: 600 }}>
@@ -166,8 +157,7 @@ export default function Signup() {
               </span>
             ) : null}
           </div>
-          
-          {/* phone input with validation */}
+
           <input
             className="auth-input"
             name="phone"
@@ -180,7 +170,6 @@ export default function Signup() {
             aria-label="Phone number"
           />
 
-          {/* phone number validation */}
           <div style={{ textAlign: "left", marginTop: 6, fontSize: 13 }}>
             {phone ? (
               <span style={{ color: phoneValid ? "#1e7e34" : "#c82333", fontWeight: 600 }}>
@@ -189,7 +178,6 @@ export default function Signup() {
             ) : null}
           </div>
 
-          {/* address field */}
           <textarea
             className="auth-input"
             name="address"
@@ -202,58 +190,76 @@ export default function Signup() {
             style={{ minHeight: 80, resize: "vertical", marginTop: 8 }}
           />
 
-          {/* password field */}
-          <input
-            className="auth-input"
-            name="password"
-            type="password"
-            autoComplete="new-password"
-            placeholder="Password"
-            value={password}
-            onChange={handlePasswordChange}
-            required
-            aria-label="Password"
-          />
+          {/* Password + Confirm with one Show/Hide toggle */}
+          <div style={{ display: "flex", gap: 8 }}>
+            <div style={{ flex: 1, display: "grid", gap: 8 }}>
+              <input
+                className="auth-input"
+                name="password"
+                type={showPasswords ? "text" : "password"}
+                autoComplete="new-password"
+                placeholder="Password"
+                value={password}
+                onChange={handlePasswordChange}
+                required
+                aria-label="Password"
+              />
+              <input
+                className="auth-input"
+                name="confirmPassword"
+                type={showPasswords ? "text" : "password"}
+                autoComplete="new-password"
+                placeholder="Confirm password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                required
+                aria-label="Confirm password"
+              />
+            </div>
+            <button
+              type="button"
+              className="btn"
+              onClick={() => setShowPasswords((s) => !s)}
+              aria-label={showPasswords ? "Hide passwords" : "Show passwords"}
+            >
+              {showPasswords ? "Hide" : "Show"}
+            </button>
+          </div>
+
+          {/* Match hint */}
+          <div style={{ textAlign: "left", marginTop: 6, fontSize: 13 }}>
+            {confirmPassword ? (
+              <span style={{ color: passwordsMatch ? "#1e7e34" : "#c82333", fontWeight: 600 }}>
+                {passwordsMatch ? "Passwords match" : "Passwords do not match"}
+              </span>
+            ) : null}
+          </div>
 
           {/* password requirements */}
           <div style={{ textAlign: "left", marginTop: 8, fontSize: 13, color: "#55607f" }}>
             <div>
-              <span style={indicator(checks.length)}>
-                {checks.length ? "✔" : "✖"}
-              </span>
+              <span style={indicator(checks.length)}>{checks.length ? "✔" : "✖"}</span>
               <span style={{ marginLeft: 8 }}>At least 8 characters</span>
             </div>
             <div>
-              <span style={indicator(checks.upper)}>
-                {checks.upper ? "✔" : "✖"}
-              </span>
+              <span style={indicator(checks.upper)}>{checks.upper ? "✔" : "✖"}</span>
               <span style={{ marginLeft: 8 }}>Contains an uppercase letter</span>
             </div>
             <div>
-              <span style={indicator(checks.lower)}>
-                {checks.lower ? "✔" : "✖"}
-              </span>
+              <span style={indicator(checks.lower)}>{checks.lower ? "✔" : "✖"}</span>
               <span style={{ marginLeft: 8 }}>Contains a lowercase letter</span>
             </div>
             <div>
-              <span style={indicator(checks.number)}>
-                {checks.number ? "✔" : "✖"}
-              </span>
+              <span style={indicator(checks.number)}>{checks.number ? "✔" : "✖"}</span>
               <span style={{ marginLeft: 8 }}>Contains a number</span>
             </div>
             <div>
-              <span style={indicator(checks.special)}>
-                {checks.special ? "✔" : "✖"}
-              </span>
+              <span style={indicator(checks.special)}>{checks.special ? "✔" : "✖"}</span>
               <span style={{ marginLeft: 8 }}>Contains a special character (e.g. !@#$%)</span>
             </div>
           </div>
 
-          <button
-            className="btn primary"
-            type="submit"
-            style={{ marginTop: 12 }}
-          >
+          <button className="btn primary" type="submit" style={{ marginTop: 12 }}>
             Create account
           </button>
         </form>
