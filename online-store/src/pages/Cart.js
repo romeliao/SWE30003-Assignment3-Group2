@@ -1,16 +1,27 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import CartItem from "../components/cartItem";
 
 export default function Cart() {
-  const [cart, setCart] = useState([
-    { id: 1, name: "Bread", price: 20, quantity: 1, image: "/img/itemA.jpg" },
-    { id: 2, name: "Milk", price: 15, quantity: 2, image: "/img/itemB.jpg" },
-  ]);
+  const [cart, setCart] = useState([]);
 
-  const handleRemove = (id) => setCart(cart.filter((i) => i.id !== id));
+  useEffect(() => {
+    const storedCart = JSON.parse(localStorage.getItem("cart")) || [];
+    setCart(storedCart);
+  }, []);
 
-  const handleQuantityChange = (id, qty) =>
-    setCart(cart.map((i) => (i.id === id ? { ...i, quantity: +qty } : i)));
+  const handleRemove = (id) => {
+    const updated = cart.filter((i) => i.id !== id);
+    setCart(updated);
+    localStorage.setItem("cart", JSON.stringify(updated));
+  };
+
+  const handleQuantityChange = (id, qty) => {
+    const updated = cart.map((i) =>
+      i.id === id ? { ...i, quantity: +qty } : i
+    );
+    setCart(updated);
+    localStorage.setItem("cart", JSON.stringify(updated));
+  };
 
   const total = cart.reduce((sum, i) => sum + i.price * i.quantity, 0);
 

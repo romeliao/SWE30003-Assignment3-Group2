@@ -28,6 +28,7 @@ export default function CataloguePage() {
   };
 
 
+
   return (
     <div className="page">
       <h1>Product Catalogue</h1>

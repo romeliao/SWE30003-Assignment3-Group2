@@ -169,3 +169,29 @@ button:hover {
 .profile-icon {
   display: block;
 }
+
+.cart {
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 1.5rem;
+}
+
+.cart-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  margin-bottom: 1rem;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+}
+
+.cart-item button {
+  background: #ff5a5f;
+  color: #fff;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+}
