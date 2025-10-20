@@ -10,10 +10,23 @@ export default function CataloguePage() {
 
   const addToCart = (product) => {
     const cart = JSON.parse(localStorage.getItem("cart")) || [];
-    cart.push(product);
-    localStorage.setItem("cart", JSON.stringify(cart));
+    const existingItem = cart.find((item) => item.id === product.id);
+
+    let updatedCart;
+    if (existingItem) {
+      updatedCart = cart.map((item) =>
+        item.id === product.id
+          ? { ...item, quantity: (item.quantity || 1) + 1 }
+          : item
+      );
+    } else {
+      updatedCart = [...cart, { ...product, quantity: 1 }];
+    }
+
+    localStorage.setItem("cart", JSON.stringify(updatedCart));
     alert(`${product.name} added to cart`);
   };
+
 
   return (
     <div className="page">

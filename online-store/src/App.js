@@ -27,6 +27,7 @@ function App() {
           <Route path="/signup" element={<Signup />} />
           <Route path="/forgot-password" element={<ForgotPasswordPage />} />
           <Route path="/reset-password" element={<ResetPasswordPage />} />
+          <Route path="/cart" element={<Cart />} />
           
           {/* Staff-only routes */}
           <Route
