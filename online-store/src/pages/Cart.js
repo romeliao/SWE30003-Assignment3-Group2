@@ -23,6 +23,11 @@ export default function Cart() {
     localStorage.setItem("cart", JSON.stringify(updated));
   };
 
+  const handleClearCart = () => {
+    setCart([]);
+    localStorage.removeItem("cart");
+  };
+
   const total = cart.reduce((sum, i) => sum + i.price * i.quantity, 0);
 
   return (
@@ -39,10 +44,20 @@ export default function Cart() {
             />
           ))}
           <h3>Total: ${total}</h3>
+          
+          <div className="cart-actions">
+            <button className="clear-cart-btn" onClick={handleClearCart}>
+              Clear Cart
+            </button>
+            <button className="checkout-btn" onClick={() => alert("Checkout functionality coming soon!")}>
+              Proceed to Checkout
+            </button>
+          </div>
         </>
       ) : (
         <p>Your cart is empty.</p>
       )}
+
     </div>
   );
 }

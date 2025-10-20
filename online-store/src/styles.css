@@ -170,6 +170,7 @@ button:hover {
   display: block;
 }
 
+/* Cart styling */
 .cart {
   max-width: 800px;
   margin: 2rem auto;
@@ -180,18 +181,89 @@ button:hover {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1rem;
   border: 1px solid #ddd;
+  padding: 1rem;
   border-radius: 10px;
   margin-bottom: 1rem;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+  background: #fff;
 }
 
-.cart-item button {
-  background: #ff5a5f;
-  color: #fff;
+.cart-item-info h4 {
+  margin: 0;
+}
+
+.cart-item-info p {
+  margin: 0.25rem 0 0;
+  color: #555;
+}
+
+.cart-item-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.cart-item-actions button {
+  background: #3f528a;
   border: none;
-  padding: 6px 10px;
+  padding: 0.4rem 0.6rem;
   border-radius: 5px;
   cursor: pointer;
+  font-size: 1rem;
+  transition: 0.2s;
+}
+
+.cart-item-actions button:hover {
+  background: #2b3a67;
+}
+
+button.remove-btn {
+  background: #e13e44;
+  color: white;
+  margin-left: 0.5rem;
+}
+
+button.remove-btn:hover {
+  background: rgb(173, 35, 40);
+}
+
+.clear-cart-btn {
+  display: block;
+  margin-left: auto;
+  margin-top: 1rem;
+  background: #444;
+  color: #fff;
+  border: none;
+  padding: 0.6rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  transition: 0.2s;
+}
+
+.clear-cart-btn:hover {
+  background: #222;
+}
+
+.cart-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.checkout-btn {
+  background: #3f528a;
+  color: white;
+  border: none;
+  padding: 0.6rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  transition: 0.2s;
+}
+
+.checkout-btn:hover {
+  background: #2b3a67;
 }
