@@ -24,6 +24,28 @@ body {
   padding: 20px;
 }
 
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 10px 0 16px 0;
+}
+
+.filter {
+  background: #eef2ff;
+  color: #2b3a67;
+  border: 1px solid #d7ddff;
+  padding: 6px 12px;
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.filter.active {
+  background: #2b3a67;
+  color: #fff;
+  border-color: #2b3a67;
+}
+
 .grid {
   display: flex;
   gap: 20px;
@@ -35,6 +57,34 @@ body {
   padding: 15px;
   border-radius: 8px;
   box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  /* Ensure all product cards have the same footprint */
+  width: 220px;                 /* fixed width for consistency */
+  min-height: 200px;            /* uniform height across cards */
+  display: flex;                /* stack content vertically */
+  flex-direction: column;
+}
+
+/* Title wraps to max two lines to keep heights equal */
+.card h3 {
+  margin: 0 0 6px 0;
+  font-size: 1.1rem;
+  line-height: 1.2;
+  min-height: 2.4em;            /* ~2 lines reserved */
+  display: -webkit-box;
+  line-clamp: 2;                /* standard syntax */
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Reduce paragraph spacing so content fits neatly */
+.card p {
+  margin: 4px 0;
+}
+
+/* Keep the action button aligned to the card bottom */
+.card button {
+  margin-top: auto;
 }
 
 button {

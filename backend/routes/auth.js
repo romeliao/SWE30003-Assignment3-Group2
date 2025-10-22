@@ -39,6 +39,9 @@ router.post('/login', login);
 router.post('/forgot-password', forgotPassword);
 router.post('/reset-password', resetPassword);
 
+// Public route to view products (for catalogue page - accessible to everyone)
+router.get('/products', getAllProducts);
+
 // Protected routes (any authenticated user)
 router.get('/user', verifyToken, getUser);
 router.put('/user', verifyToken, updateUser);
