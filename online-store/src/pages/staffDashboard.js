@@ -33,25 +33,25 @@ export default function StaffDashboard() {
           <div className="dashboard-card">
             <h3>Manage Products</h3>
             <p>Add, edit, or remove products from the catalogue</p>
-            <button className="btn primary">Go to Products</button>
+            <button className="btn primary" onClick={() => navigate("/staff/products")}>Go to Products</button>
           </div>
 
           <div className="dashboard-card">
             <h3>Manage Orders</h3>
             <p>View and process customer orders</p>
-            <button className="btn primary">Go to Orders</button>
+            <button className="btn primary" onClick={() => navigate("/staff/orders")}>Go to Orders</button>
           </div>
 
           <div className="dashboard-card">
             <h3>View Customers</h3>
             <p>Manage customer accounts and information</p>
-            <button className="btn primary">Go to Customers</button>
+            <button className="btn primary" onClick={() => navigate("/staff/customers")}>Go to Customers</button>
           </div>
 
           <div className="dashboard-card">
             <h3>Reports</h3>
             <p>View sales reports and analytics</p>
-            <button className="btn primary">Go to Reports</button>
+            <button className="btn primary" onClick={() => navigate("/staff/reports")}>Go to Reports</button>
           </div>
         </div>
 

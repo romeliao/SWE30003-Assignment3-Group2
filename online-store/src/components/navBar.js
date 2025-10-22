@@ -1,12 +1,26 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { Link, useLocation } from "react-router-dom";
 import profileIcon from "../icons/profile.png";
 
 export default function Navbar() {
-  const user = JSON.parse(localStorage.getItem("user"));
-  console.log("[Navbar] user:", user);
+  const [user, setUser] = useState(null);
+  const location = useLocation();
+
+  useEffect(() => {
+    const userData = localStorage.getItem("user");
+    if (userData) {
+      const parsedUser = JSON.parse(userData);
+      setUser(parsedUser);
+      console.log("[Navbar] user:", parsedUser);
+      console.log("[Navbar] user role:", parsedUser?.role);
+    } else {
+      setUser(null);
+    }
+  }, [location]);
+
   const isStaff = user?.role === "staff";
   const isCustomer = user?.role === "customer";
+  console.log("[Navbar] isStaff:", isStaff, "isCustomer:", isCustomer);
 
   return (
     <nav className="navbar">

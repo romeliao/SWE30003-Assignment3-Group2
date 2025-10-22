@@ -10,6 +10,8 @@ import ResetPasswordPage from "./pages/resetPasswordPage";
 import StaffDashboard from "./pages/staffDashboard";
 import ManageProducts from "./pages/ManageProducts";
 import ManageOrders from "./pages/ManageOrders";
+import ViewCustomers from "./pages/ViewCustomers";
+import Reports from "./pages/Reports";
 import Cart from "./pages/Cart";
 import MyOrders from "./pages/MyOrders";
 import "./styles.css";
@@ -50,6 +52,22 @@ function App() {
             element={
               <ProtectedRoute allowedRole="staff">
                 <ManageOrders />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/staff/customers"
+            element={
+              <ProtectedRoute allowedRole="staff">
+                <ViewCustomers />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/staff/reports"
+            element={
+              <ProtectedRoute allowedRole="staff">
+                <Reports />
               </ProtectedRoute>
             }
           />
