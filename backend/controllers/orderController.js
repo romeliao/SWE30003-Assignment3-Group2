@@ -140,7 +140,7 @@ exports.createOrder = async (req, res) => {
       totalAmount,
       shippingAddress: shippingAddress || "Not provided",
       paymentMethod: paymentMethod || "Cash on delivery",
-      status: "pending",
+      status: "completed",
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };

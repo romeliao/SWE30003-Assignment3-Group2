@@ -16,7 +16,7 @@
     "name": "Bread",
     "description": "Soft white bread loaf suitable for sandwiches and toasts",
     "price": 4,
-    "stock": 80,
+    "stock": 78,
     "category": "Bakery ",
     "imageUrl": "",
     "createdAt": "2025-10-22T03:10:58.887Z",
@@ -264,6 +264,78 @@
     "imageUrl": "",
     "createdAt": "2025-10-22T04:11:43.214Z",
     "updatedAt": "2025-10-22T04:11:43.214Z",
+    "createdBy": "jerome.liao2003@gmail.com"
+  },
+  {
+    "id": "1761108121107",
+    "name": "Cheese slices",
+    "description": "Processed Cheese slices greate for burgers and sandwicheds",
+    "price": 5,
+    "stock": 70,
+    "category": "Dairy",
+    "imageUrl": "",
+    "createdAt": "2025-10-22T04:42:01.107Z",
+    "updatedAt": "2025-10-22T04:42:01.107Z",
+    "createdBy": "jerome.liao2003@gmail.com"
+  },
+  {
+    "id": "1761108426934",
+    "name": "Yogurt",
+    "description": "Creamy Yogurt cup available in various flavours",
+    "price": 3.2,
+    "stock": 100,
+    "category": "Dairy",
+    "imageUrl": "",
+    "createdAt": "2025-10-22T04:47:06.934Z",
+    "updatedAt": "2025-10-22T04:47:06.934Z",
+    "createdBy": "jerome.liao2003@gmail.com"
+  },
+  {
+    "id": "1761108454644",
+    "name": "Candy",
+    "description": "Assorted sweet candies for all ages",
+    "price": 2.3,
+    "stock": 200,
+    "category": "Snacks",
+    "imageUrl": "",
+    "createdAt": "2025-10-22T04:47:34.644Z",
+    "updatedAt": "2025-10-22T04:47:34.644Z",
+    "createdBy": "jerome.liao2003@gmail.com"
+  },
+  {
+    "id": "1761108474680",
+    "name": "Popcorn",
+    "description": "Microwave popcorn packs",
+    "price": 4,
+    "stock": 100,
+    "category": "Snacks",
+    "imageUrl": "",
+    "createdAt": "2025-10-22T04:47:54.680Z",
+    "updatedAt": "2025-10-22T04:47:54.680Z",
+    "createdBy": "jerome.liao2003@gmail.com"
+  },
+  {
+    "id": "1761108521008",
+    "name": "Juice Box",
+    "description": "Fruit Juice Box for a refreshing drink anytime",
+    "price": 5.6,
+    "stock": 100,
+    "category": "Beverages",
+    "imageUrl": "",
+    "createdAt": "2025-10-22T04:48:41.008Z",
+    "updatedAt": "2025-10-22T04:48:41.008Z",
+    "createdBy": "jerome.liao2003@gmail.com"
+  },
+  {
+    "id": "1761108545790",
+    "name": "Iced Coffee",
+    "description": "Chilled coffee drink with a rich flavour",
+    "price": 5,
+    "stock": 80,
+    "category": "Beverages",
+    "imageUrl": "",
+    "createdAt": "2025-10-22T04:49:05.790Z",
+    "updatedAt": "2025-10-22T04:49:05.790Z",
     "createdBy": "jerome.liao2003@gmail.com"
   }
 ]

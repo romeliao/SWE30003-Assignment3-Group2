@@ -14,6 +14,7 @@ import ViewCustomers from "./pages/ViewCustomers";
 import Reports from "./pages/Reports";
 import Cart from "./pages/Cart";
 import MyOrders from "./pages/MyOrders";
+import Payment from "./pages/Payment";
 import "./styles.css";
 
 function App() {
@@ -78,6 +79,14 @@ function App() {
             element={
               <ProtectedRoute allowedRole="customer">
                 <Cart />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/payment"
+            element={
+              <ProtectedRoute allowedRole="customer">
+                <Payment />
               </ProtectedRoute>
             }
           />
