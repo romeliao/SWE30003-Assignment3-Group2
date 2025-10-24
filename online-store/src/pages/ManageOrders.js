@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 
 export default function ManageOrders() {
@@ -7,11 +7,7 @@ export default function ManageOrders() {
   const [filterStatus, setFilterStatus] = useState("all");
   const navigate = useNavigate();
 
-  useEffect(() => {
-    fetchOrders();
-  }, []);
-
-  const fetchOrders = async () => {
+  const fetchOrders = useCallback(async () => {
     try {
       const token = localStorage.getItem("token");
       if (!token) {
@@ -39,13 +35,17 @@ export default function ManageOrders() {
       alert("Failed to load orders");
       setLoading(false);
     }
-  };
+  }, [navigate]);
+
+  useEffect(() => {
+    fetchOrders();
+  }, [fetchOrders]);
 
   const handleStatusChange = async (orderId, newStatus) => {
     try {
       const token = localStorage.getItem("token");
       const response = await fetch(`http://localhost:5000/api/auth/staff/orders/${orderId}/status`, {
-        method: "PATCH",
+        method: "PUT",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,

@@ -5,6 +5,7 @@ export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false); 
+  const [toast, setToast] = useState(null); // { message, type }
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -16,11 +17,16 @@ export default function LoginPage() {
     };
   }, []);
 
+  const showToast = (message, type = "success") => {
+    setToast({ message, type });
+    setTimeout(() => setToast(null), 3000);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!email || !password) {
-      return alert("Please enter email and password");
+      return showToast("Please enter email and password", "error");
     }
 
     try {
@@ -33,29 +39,34 @@ export default function LoginPage() {
       const data = await response.json();
 
       if (!response.ok) {
-        return alert(data.error || "Login failed");
+        return showToast(data.error || "Login failed", "error");
       }
 
       // Save token and user
       localStorage.setItem("token", data.token);
       localStorage.setItem("user", JSON.stringify(data.user));
 
-      alert("Logged in successfully!");
+  showToast("Logged in successfully!", "success");
       
-      // Redirect based on role
-      if (data.user.role === "staff") {
-        navigate("/staff/dashboard");
-      } else {
-        navigate("/catalogue");
-      }
+      // Redirect based on role (slight delay so toast is visible)
+      setTimeout(() => {
+        if (data.user.role === "staff") {
+          navigate("/staff/dashboard");
+        } else {
+          navigate("/catalogue");
+        }
+      }, 600);
     } catch (error) {
       console.error("Login error:", error);
-      alert("Failed to login. Please check if the backend server is running.");
+      showToast("Failed to login. Please check if the backend server is running.", "error");
     }
   };
 
   return (
     <div className="page auth-page">
+      {toast && (
+        <div className={`toast toast-${toast.type}`}>{toast.message}</div>
+      )}
       <div className="auth-card">
         <h2 className="auth-title">Login</h2>
 

@@ -17,6 +17,49 @@
     "paymentMethod": "Credit Card",
     "status": "completed",
     "createdAt": "2025-10-23T05:51:12.917Z",
-    "updatedAt": "2025-10-23T05:51:12.917Z"
+    "updatedAt": "2025-10-24T00:22:29.246Z",
+    "updatedBy": "jerome.liao2003@gmail.com"
+  },
+  {
+    "id": "1761264304173",
+    "customerId": "1760934644374",
+    "customerEmail": "vampireranger03@gmail.com",
+    "items": [
+      {
+        "productId": "1761102658887",
+        "productName": "Bread",
+        "price": 4,
+        "quantity": 1,
+        "subtotal": 4
+      },
+      {
+        "productId": "1761100788020",
+        "productName": "milk",
+        "price": 5,
+        "quantity": 1,
+        "subtotal": 5
+      },
+      {
+        "productId": "1761102745930",
+        "productName": "Butter",
+        "price": 4,
+        "quantity": 1,
+        "subtotal": 4
+      },
+      {
+        "productId": "1761102857785",
+        "productName": "Chips",
+        "price": 5,
+        "quantity": 2,
+        "subtotal": 10
+      }
+    ],
+    "totalAmount": 23,
+    "shippingAddress": "123 lonsdale street, Melbourne , 3000",
+    "paymentMethod": "Credit Card",
+    "status": "completed",
+    "createdAt": "2025-10-24T00:05:04.173Z",
+    "updatedAt": "2025-10-24T00:22:19.739Z",
+    "updatedBy": "jerome.liao2003@gmail.com"
   }
 ]

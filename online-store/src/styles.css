@@ -743,6 +743,169 @@ button:hover {
   }
 }
 
+/* View Customers Page Styles */
+.customers-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.customers-table thead {
+  background: #2b3a67;
+  color: white;
+}
+
+.customers-table th {
+  padding: 1rem;
+  text-align: left;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.customers-table td {
+  padding: 1rem;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.customers-table tbody tr:hover {
+  background: #f8f9fa;
+}
+
+.customers-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.customer-details-modal {
+  max-width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.customer-info-section,
+.customer-stats-section,
+.customer-orders-section {
+  margin-bottom: 1.5rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.customer-orders-section {
+  border-bottom: none;
+}
+
+.customer-info-section h3,
+.customer-stats-section h3,
+.customer-orders-section h3 {
+  margin: 0 0 1rem 0;
+  color: #2b3a67;
+  font-size: 1.1rem;
+}
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.info-row:last-child {
+  border-bottom: none;
+}
+
+.info-label {
+  font-weight: 600;
+  color: #666;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.stat-card {
+  background: #f8f9fa;
+  padding: 1.5rem;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.stat-value {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #2b3a67;
+  margin-bottom: 0.5rem;
+}
+
+.stat-label {
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.orders-list-compact {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.order-compact {
+  background: #f8f9fa;
+  padding: 0.75rem;
+  border-radius: 6px;
+  border-left: 3px solid #2b3a67;
+}
+
+.order-compact-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+  color: #2b3a67;
+  font-size: 0.9rem;
+}
+
+.order-compact-date {
+  font-size: 0.85rem;
+  color: #666;
+  font-weight: normal;
+}
+
+.order-compact-details {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85rem;
+  color: #666;
+}
+
+.order-compact-total {
+  font-weight: 600;
+  color: #2b3a67;
+}
+
+@media (max-width: 768px) {
+  .customers-table {
+    font-size: 0.85rem;
+  }
+  
+  .customers-table th,
+  .customers-table td {
+    padding: 0.75rem 0.5rem;
+  }
+  
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .customer-details-modal {
+    width: 95%;
+    max-height: 85vh;
+  }
+}
+
 /* profile icon tweaks (if present) */
 .profile-link {
   display: inline-flex;
