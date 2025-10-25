@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import Notification from "../components/Notification";
 
 export default function Signup() {
   const [name, setName] = useState("");
@@ -20,7 +21,7 @@ export default function Signup() {
     number: false,
     special: false,
   });
-
+  const [message, setMessage] = useState({ text: "", type: "" });
   const navigate = useNavigate();
   const formRef = useRef(null);
 
@@ -103,22 +104,22 @@ export default function Signup() {
 
     // Check email
     if (!emailValid) {
-      return alert("Please enter a valid email address");
+      return setMessage({ text: "Please enter a valid email address", type: "error" });
     }
 
     // Check phone
     if (!phoneValid) {
-      return alert("Please enter a valid phone number (10-15 digits)");
+      return setMessage({ text: "Please enter a valid phone number (10-15 digits)", type: "error" });
     }
 
     // Check password
     if (!passwordValid) {
-      return alert("Password does not meet requirements");
+      return setMessage({ text: "Password does not meet requirements", type: "error" });
     }
 
     // Check password match
     if (password !== confirmPassword) {
-      return alert("Passwords do not match");
+      return setMessage({ text: "Passwords do not match", type: "error" });
     }
 
     try {
@@ -138,7 +139,7 @@ export default function Signup() {
       localStorage.setItem("token", data.token);
       localStorage.setItem("user", JSON.stringify(data.user));
 
-      alert("Account created successfully!");
+      setMessage({ text: "Account created successfully!", type: "success" });
       
       // Redirect based on role
       if (data.user.role === "staff") {
@@ -301,7 +302,7 @@ export default function Signup() {
             Sign Up
           </button>
         </form>
-
+        <Notification message={message} onClear={() => setMessage({ text: "", type: "" })} />
         <p className="auth-footer" style={{ marginTop: 12 }}>
           Already have an account?{" "}
           <Link to="/login">

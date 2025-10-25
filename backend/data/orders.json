@@ -147,8 +147,148 @@
     "totalAmount": 72,
     "shippingAddress": "2, 1, 1",
     "paymentMethod": "Credit Card",
-    "status": "completed",
+    "status": "shipped",
     "createdAt": "2025-10-25T06:40:16.404Z",
-    "updatedAt": "2025-10-25T06:40:16.404Z"
+    "updatedAt": "2025-10-25T07:43:31.311Z",
+    "updatedBy": "123@gmail.com"
+  },
+  {
+    "id": "1761376894540",
+    "customerId": "1761369999395",
+    "customerEmail": "hmm@gmai.com",
+    "items": [
+      {
+        "productId": "1761102745930",
+        "productName": "Butter",
+        "price": 4,
+        "quantity": 1,
+        "subtotal": 4
+      }
+    ],
+    "totalAmount": 4,
+    "shippingAddress": "j, j, v",
+    "paymentMethod": "Credit Card",
+    "status": "processing",
+    "createdAt": "2025-10-25T07:21:34.540Z",
+    "updatedAt": "2025-10-25T08:59:41.717Z",
+    "updatedBy": "123@gmail.com"
+  },
+  {
+    "id": "1761377672197",
+    "customerId": "1761369999395",
+    "customerEmail": "hmm@gmai.com",
+    "items": [
+      {
+        "productId": "1761100788020",
+        "productName": "milk",
+        "price": 5,
+        "quantity": 1,
+        "subtotal": 5
+      }
+    ],
+    "totalAmount": 5,
+    "shippingAddress": "Street 1, melvb, 1234",
+    "paymentMethod": "Credit Card",
+    "status": "pending",
+    "createdAt": "2025-10-25T07:34:32.197Z",
+    "updatedAt": "2025-10-25T08:59:34.020Z",
+    "updatedBy": "123@gmail.com"
+  },
+  {
+    "id": "1761383301318",
+    "customerId": "1761382880034",
+    "customerEmail": "myname@h.com",
+    "items": [
+      {
+        "productId": "1761103367225",
+        "productName": "Soft Drink",
+        "price": 4.2,
+        "quantity": 5,
+        "subtotal": 21
+      },
+      {
+        "productId": "1761265455686",
+        "productName": "Tea Bags",
+        "price": 5,
+        "quantity": 7,
+        "subtotal": 35
+      },
+      {
+        "productId": "1761104744989",
+        "productName": "Ice Cream",
+        "price": 7,
+        "quantity": 1,
+        "subtotal": 7
+      },
+      {
+        "productId": "1761273039567",
+        "productName": "Cat food",
+        "price": 18,
+        "quantity": 1,
+        "subtotal": 18
+      },
+      {
+        "productId": "1761273225367",
+        "productName": "Pen Pack",
+        "price": 4,
+        "quantity": 1,
+        "subtotal": 4
+      },
+      {
+        "productId": "1761103340134",
+        "productName": "Chocolate Bar",
+        "price": 3.5,
+        "quantity": 1,
+        "subtotal": 3.5
+      },
+      {
+        "productId": "1761108454644",
+        "productName": "Candy",
+        "price": 2.3,
+        "quantity": 1,
+        "subtotal": 2.3
+      },
+      {
+        "productId": "1761108474680",
+        "productName": "Popcorn",
+        "price": 4,
+        "quantity": 1,
+        "subtotal": 4
+      },
+      {
+        "productId": "1761104105167",
+        "productName": "Soap",
+        "price": 3.6,
+        "quantity": 1,
+        "subtotal": 3.6
+      },
+      {
+        "productId": "1761104149779",
+        "productName": "Shampoo",
+        "price": 6,
+        "quantity": 2,
+        "subtotal": 12
+      },
+      {
+        "productId": "1761265533073",
+        "productName": "Deodorant",
+        "price": 7,
+        "quantity": 1,
+        "subtotal": 7
+      },
+      {
+        "productId": "1761104062043",
+        "productName": "Toothpaste",
+        "price": 4,
+        "quantity": 1,
+        "subtotal": 4
+      }
+    ],
+    "totalAmount": 121.39999999999999,
+    "shippingAddress": "No street, city, code",
+    "paymentMethod": "Credit Card",
+    "status": "pending",
+    "createdAt": "2025-10-25T09:08:21.318Z",
+    "updatedAt": "2025-10-25T09:08:21.318Z"
   }
 ]

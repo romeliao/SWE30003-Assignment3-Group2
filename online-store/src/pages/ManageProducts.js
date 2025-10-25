@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
+import Notification from "../components/Notification";
 
 export default function ManageProducts() {
   const [products, setProducts] = useState([]);
@@ -14,6 +15,7 @@ export default function ManageProducts() {
     category: "",
   });
   const navigate = useNavigate();
+  const [message, setMessage] = useState({ text: "", type: "" }); 
 
   const fetchProducts = useCallback(async () => {
     try {
@@ -131,7 +133,7 @@ export default function ManageProducts() {
       const result = await response.json();
       console.log("Success response:", result);
 
-      alert(editingProduct ? "Product updated successfully!" : "Product added successfully!");
+      setMessage({ text: "Product updated successfully!", type: "success" });
       setShowModal(false);
       fetchProducts();
     } catch (error) {
@@ -164,11 +166,11 @@ export default function ManageProducts() {
         throw new Error("Failed to delete product");
       }
 
-      alert("Product deleted successfully!");
+      setMessage({ text: "Product deleted successfully!", type: "success" });
       fetchProducts();
     } catch (error) {
       console.error("Error deleting product:", error);
-      alert("Failed to delete product");
+      setMessage({ text: "Failed to delete product.", type: "error" });
     }
   };
 
@@ -200,11 +202,11 @@ export default function ManageProducts() {
         throw new Error("Failed to update stock");
       }
 
-      alert("Stock updated successfully!");
+      setMessage({ text: "Stock updated successfully!", type: "success" });
       fetchProducts();
     } catch (error) {
       console.error("Error updating stock:", error);
-      alert("Failed to update stock");
+      setMessage({ text: "Failed to update stock", type: "error" });
     }
   };
 
@@ -429,6 +431,7 @@ export default function ManageProducts() {
             </div>
           </div>
         )}
+        <Notification message={message} onClear={() => setMessage({ text: "", type: "" })} />
       </div>
     </div>
   );

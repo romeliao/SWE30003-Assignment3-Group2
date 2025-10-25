@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import Notification from "../components/Notification";
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState("");
-  const [message, setMessage] = useState("");
-  const [error, setError] = useState("");
+  const [message, setMessage] = useState({ text: "", type: "" });
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  
 
   useEffect(() => {
     document.body.classList.add("no-scroll");
@@ -18,10 +19,9 @@ export default function ForgotPasswordPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setMessage("");
-    setError("");
 
     if (!email) {
-      return setError("Please enter your email address");
+      return setMessage({ text: "Please enter your email address", type: "error" });
     }
 
     setLoading(true);
@@ -36,12 +36,15 @@ export default function ForgotPasswordPage() {
       const data = await response.json();
 
       if (!data.success) {
-        setError(data.error || "Failed to send reset instructions");
+        setMessage({ text: data.error || "Failed to send reset instructions", type: "error" });
         setLoading(false);
         return;
       }
 
-      setMessage(data.message || "Reset link generated!");
+      setMessage({
+        text: "Reset link generated! Redirecting to reset page...",
+        type: "success",
+      });
       
       // Redirect to reset password page after 2 seconds
       setTimeout(() => {
@@ -49,7 +52,10 @@ export default function ForgotPasswordPage() {
       }, 2000);
     } catch (err) {
       console.error("Forgot password error:", err);
-      setError("Failed to send reset instructions. Please check if the backend server is running.");
+      setMessage({
+        text: "Failed to send reset instructions. Please check if the backend server is running.",
+        type: "error",
+      });
     } finally {
       setLoading(false);
     }
@@ -73,19 +79,6 @@ export default function ForgotPasswordPage() {
             required
             disabled={loading}
           />
-
-          {error && (
-            <div style={{ color: "#c82333", fontSize: 14, marginTop: 10, textAlign: "center" }}>
-              {error}
-            </div>
-          )}
-
-          {message && (
-            <div style={{ color: "#1e7e34", fontSize: 14, marginTop: 10, textAlign: "center" }}>
-              {message}
-            </div>
-          )}
-
           <button 
             className="btn primary" 
             type="submit"
@@ -95,7 +88,7 @@ export default function ForgotPasswordPage() {
             {loading ? "Sending..." : "Send Reset Instructions"}
           </button>
         </form>
-
+        <Notification message={message} onClear={() => setMessage({ text: "", type: "" })} />
         <p className="auth-footer" style={{ marginTop: 12 }}>
           Remember your password?{" "}
           <Link to="/login">Login</Link>

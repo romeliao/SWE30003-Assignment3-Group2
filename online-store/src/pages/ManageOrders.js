@@ -1,11 +1,13 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
+import Notification from "../components/Notification";
 
 export default function ManageOrders() {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filterStatus, setFilterStatus] = useState("all");
   const navigate = useNavigate();
+  const [message, setMessage] = useState({ text: "", type: "" }); 
 
   const fetchOrders = useCallback(async () => {
     try {
@@ -57,11 +59,13 @@ export default function ManageOrders() {
         throw new Error("Failed to update order status");
       }
 
-      alert("Order status updated successfully");
-      fetchOrders(); // Refresh orders
+      setMessage({ text: "Order status updated successfully.", type: "success" });
+      fetchOrders(); 
+      setTimeout(() => setMessage({ text: "", type: "" }), 3000);
     } catch (error) {
       console.error("Error updating order status:", error);
-      alert("Failed to update order status");
+      setMessage({ text: "Failed to update order status.", type: "error" });
+      setTimeout(() => setMessage({ text: "", type: "" }), 4000);
     }
   };
 
@@ -124,6 +128,7 @@ export default function ManageOrders() {
             </select>
           </div>
         </div>
+        <Notification message={message} onClear={() => setMessage({ text: "", type: "" })} />
 
         {filteredOrders.length === 0 ? (
           <p>No orders found.</p>

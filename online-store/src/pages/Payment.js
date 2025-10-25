@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import Notification from "../components/Notification";
 
 export default function Payment() {
   const [cartItems, setCartItems] = useState([]);
@@ -13,43 +14,31 @@ export default function Payment() {
     zipCode: "",
   });
   const [processing, setProcessing] = useState(false);
+  const [cardError, setCardError] = useState("");
+  const [expiryError, setExpiryError] = useState("");
+  const [message, setMessage] = useState({ text: "", type: "" });
   const navigate = useNavigate();
 
-  // Get user-specific cart key
-  const getCartKey = () => {
-    const user = JSON.parse(localStorage.getItem("user"));
-    return user ? `cart_${user.id}` : "cart_guest";
-  };
-
+  // Load and group cart
   useEffect(() => {
-    loadCart();
-  }, []);
-
-  const loadCart = () => {
-    const cartKey = getCartKey();
+    const user = JSON.parse(localStorage.getItem("user"));
+    const cartKey = user ? `cart_${user.id}` : "cart_guest";
     const cart = JSON.parse(localStorage.getItem(cartKey)) || [];
-    
     if (cart.length === 0) {
       navigate("/cart");
       return;
     }
-
-    // Group items by ID and add quantity
     const grouped = cart.reduce((acc, item) => {
       const existing = acc.find((i) => i.id === item.id);
-      if (existing) {
-        existing.quantity += 1;
-      } else {
-        acc.push({ ...item, quantity: 1 });
-      }
+      if (existing) existing.quantity += 1;
+      else acc.push({ ...item, quantity: 1 });
       return acc;
     }, []);
     setCartItems(grouped);
-  };
+  }, [navigate]);
 
-  const calculateTotal = () => {
-    return cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
-  };
+  const calculateTotal = () =>
+    cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -63,12 +52,14 @@ export default function Payment() {
     try {
       const token = localStorage.getItem("token");
       if (!token) {
-        alert("Please log in to place an order.");
+        setMessage({ text: "Please log in to place an order.", type: "error" });
         navigate("/login");
         return;
       }
 
-      // Prepare order data
+      const user = JSON.parse(localStorage.getItem("user"));
+      const cartKey = user ? `cart_${user.id}` : "cart_guest";
+
       const orderData = {
         items: cartItems.map((item) => ({
           productId: item.id,
@@ -76,9 +67,9 @@ export default function Payment() {
         })),
         shippingAddress: `${paymentForm.billingAddress}, ${paymentForm.city}, ${paymentForm.zipCode}`,
         paymentMethod: "Credit Card",
+        status: "pending", // default new orders to pending
       };
 
-      // Create order via backend
       const response = await fetch("http://localhost:5000/api/auth/customer/orders", {
         method: "POST",
         headers: {
@@ -93,18 +84,16 @@ export default function Payment() {
         throw new Error(error.error || "Failed to create order");
       }
 
-      const result = await response.json();
-
-      // Clear the cart after successful order
-      const cartKey = getCartKey();
+      // clear cart and show success
       localStorage.removeItem(cartKey);
-
-      // Navigate to orders page
-      alert("Order placed successfully! Your order is being processed.");
-      navigate("/orders");
+      setMessage({
+        text: "Order placed successfully! Redirecting to your orders page...",
+        type: "success",
+      });
+      setTimeout(() => navigate("/orders"), 2000);
     } catch (error) {
       console.error("Payment error:", error);
-      alert(`Payment failed: ${error.message}`);
+      setMessage({ text: `Payment failed: ${error.message}`, type: "error" });
       setProcessing(false);
     }
   };
@@ -124,7 +113,7 @@ export default function Payment() {
         <h1>Checkout</h1>
 
         <div className="payment-container">
-          {/* Order Summary */}
+          {/* ----- Order Summary ----- */}
           <div className="order-summary-section">
             <h2>Order Summary</h2>
             <div className="order-items">
@@ -157,10 +146,11 @@ export default function Payment() {
             </div>
           </div>
 
-          {/* Payment Form */}
+          {/* ----- Payment Form ----- */}
           <div className="payment-form-section">
             <h2>Payment Information</h2>
             <form onSubmit={handlePlaceOrder} className="payment-form">
+              {/* Cardholder Name */}
               <div className="form-group">
                 <label>Cardholder Name *</label>
                 <input
@@ -174,20 +164,37 @@ export default function Payment() {
                 />
               </div>
 
+              {/* Card Number */}
               <div className="form-group">
                 <label>Card Number *</label>
                 <input
                   type="text"
                   name="cardNumber"
                   value={paymentForm.cardNumber}
-                  onChange={handleInputChange}
+                  onChange={(e) => {
+                    let v = e.target.value.replace(/\D/g, "").slice(0, 16);
+                    v = v.replace(/(.{4})/g, "$1 ").trim();
+                    setPaymentForm((prev) => ({ ...prev, cardNumber: v }));
+                    const digits = v.replace(/\D/g, "");
+                    setCardError(
+                      digits.length > 0 && digits.length < 16
+                        ? "Card number must be 16 digits"
+                        : ""
+                    );
+                  }}
                   placeholder="1234 5678 9012 3456"
                   maxLength="19"
                   required
                   className="auth-input"
                 />
+                {cardError && (
+                  <p style={{ color: "#c82333", fontSize: "0.85rem", marginTop: "4px" }}>
+                    {cardError}
+                  </p>
+                )}
               </div>
 
+              {/* Expiry + CVV */}
               <div className="form-row">
                 <div className="form-group">
                   <label>Expiry Date *</label>
@@ -195,13 +202,27 @@ export default function Payment() {
                     type="text"
                     name="expiryDate"
                     value={paymentForm.expiryDate}
-                    onChange={handleInputChange}
+                    onChange={(e) => {
+                      let v = e.target.value.replace(/[^0-9]/g, "").slice(0, 4);
+                      if (v.length >= 3) v = v.slice(0, 2) + "/" + v.slice(2);
+                      setPaymentForm((prev) => ({ ...prev, expiryDate: v }));
+                      const match = v.match(/^(0[1-9]|1[0-2])\/\d{2}$/);
+                      setExpiryError(
+                        v.length === 5 && !match ? "Invalid date format (MM/YY)" : ""
+                      );
+                    }}
                     placeholder="MM/YY"
                     maxLength="5"
                     required
                     className="auth-input"
                   />
+                  {expiryError && (
+                    <p style={{ color: "#c82333", fontSize: "0.85rem", marginTop: "4px" }}>
+                      {expiryError}
+                    </p>
+                  )}
                 </div>
+
                 <div className="form-group">
                   <label>CVV *</label>
                   <input
@@ -217,6 +238,7 @@ export default function Payment() {
                 </div>
               </div>
 
+              {/* Address fields */}
               <div className="form-group">
                 <label>Billing Address *</label>
                 <input
@@ -257,6 +279,7 @@ export default function Payment() {
                 </div>
               </div>
 
+              {/* Buttons */}
               <div className="payment-actions">
                 <button
                   type="button"
@@ -279,6 +302,9 @@ export default function Payment() {
                 </button>
               </div>
             </form>
+
+            {/* Global notification box */}
+            <Notification message={message} onClear={() => setMessage({ text: "", type: "" })} />
           </div>
         </div>
       </div>
