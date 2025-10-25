@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 
 export default function ManageProducts() {
@@ -15,12 +15,7 @@ export default function ManageProducts() {
   });
   const navigate = useNavigate();
 
-  // Fetch all products
-  useEffect(() => {
-    fetchProducts();
-  }, []);
-
-  const fetchProducts = async () => {
+  const fetchProducts = useCallback(async () => {
     try {
       const token = localStorage.getItem("token");
       if (!token) {
@@ -46,7 +41,12 @@ export default function ManageProducts() {
       alert("Failed to load products");
       setLoading(false);
     }
-  };
+  }, [navigate]);
+
+  // Fetch all products
+  useEffect(() => {
+    fetchProducts();
+  }, [fetchProducts]);
 
   // Handle form input changes
   const handleInputChange = (e) => {
@@ -369,7 +369,7 @@ export default function ManageProducts() {
                   />
                 </div>
 
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "1rem" }}>
                   <div>
                     <label style={{ display: "block", marginBottom: "0.5rem", fontWeight: "500" }}>
                       Price ($) <span style={{ color: "red" }}>*</span>

@@ -76,7 +76,6 @@ export default function Reports() {
   
   // Completed orders
   const completedOrders = filteredOrders.filter(o => o.status === "completed");
-  const completedRevenue = completedOrders.reduce((sum, order) => sum + order.totalAmount, 0);
 
   // Top selling products
   const productSales = {};
@@ -189,7 +188,7 @@ export default function Reports() {
         </div>
 
         {/* Two Column Layout */}
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "2rem", marginBottom: "2rem" }}>
+  <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "2rem", marginBottom: "2rem" }}>
           {/* Top Selling Products */}
           <div style={{ background: "#fff", padding: "1.5rem", borderRadius: "8px", boxShadow: "0 2px 4px rgba(0,0,0,0.1)" }}>
             <h2 style={{ marginBottom: "1rem", fontSize: "1.25rem" }}>Top Selling Products</h2>
