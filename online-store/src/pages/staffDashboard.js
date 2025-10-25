@@ -19,17 +19,19 @@ export default function StaffDashboard() {
   return (
     <div className="page" style={{ padding: "2rem" }}>
       <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
-        <h1>Staff Dashboard</h1>
+        <div style={{ marginBottom: "2rem" }}>
+          <h1>Staff Dashboard</h1>
+        </div>
         
         {user && (
-          <div style={{ marginBottom: "2rem", padding: "1rem", background: "#f5f5f5", borderRadius: "8px" }}>
-            <h3>Welcome, {user.name}!</h3>
-            <p>Email: {user.email}</p>
-            <p>Role: {user.role}</p>
+          <div style={{ marginBottom: "2rem", padding: "1.5rem", background: "#f8f9fa", borderRadius: "8px", boxShadow: "0 2px 4px rgba(0,0,0,0.1)" }}>
+            <h3 style={{ marginBottom: "0.5rem" }}>Welcome, {user.name}!</h3>
+            <p style={{ margin: "0.25rem 0", color: "#666" }}>Email: {user.email}</p>
+            <p style={{ margin: "0.25rem 0", color: "#666" }}>Role: <span style={{ textTransform: "capitalize", fontWeight: 600, color: "#2b3a67" }}>{user.role}</span></p>
           </div>
         )}
 
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))", gap: "1rem", marginBottom: "2rem" }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))", gap: "1.5rem", marginBottom: "2rem" }}>
           <div className="dashboard-card">
             <h3>Manage Products</h3>
             <p>Add, edit, or remove products from the catalogue</p>
@@ -55,7 +57,7 @@ export default function StaffDashboard() {
           </div>
         </div>
 
-        <button onClick={handleLogout} className="btn" style={{ background: "#dc3545" }}>
+        <button onClick={handleLogout} className="btn" style={{ background: "#dc3545", color: "#fff" }}>
           Logout
         </button>
       </div>
