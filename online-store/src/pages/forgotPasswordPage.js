@@ -35,14 +35,13 @@ export default function ForgotPasswordPage() {
 
       const data = await response.json();
 
-      if (!response.ok) {
+      if (!data.success) {
         setError(data.error || "Failed to send reset instructions");
         setLoading(false);
         return;
       }
 
-      setMessage(data.message);
-      setEmail("");
+      setMessage(data.message || "Reset link generated!");
       
       // Redirect to reset password page after 2 seconds
       setTimeout(() => {

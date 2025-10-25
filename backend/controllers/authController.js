@@ -220,7 +220,7 @@ exports.forgotPassword = async (req, res) => {
 
     if (!user) {
       // Don't reveal if email exists or not for security
-      return res.json({ message: "If the email exists, a reset link has been sent" });
+      return res.json({ success: false, message: "If the email exists, a reset link has been sent" });
     }
 
     // Generate reset token
@@ -229,26 +229,22 @@ exports.forgotPassword = async (req, res) => {
 
     // Store token with expiration (1 hour)
     const tokens = await readResetTokens();
-    const tokenData = {
+    const filteredTokens = tokens.filter((t) => t.email !== user.email);
+    filteredTokens.push({
       email: user.email,
       token: hashedToken,
       expiresAt: Date.now() + 3600000, // 1 hour
       createdAt: new Date().toISOString(),
-    };
-
-    // Remove any existing tokens for this email
-    const filteredTokens = tokens.filter((t) => t.email !== user.email);
-    filteredTokens.push(tokenData);
+    });
     await writeResetTokens(filteredTokens);
 
-    // In production, send email here
-    console.log("Reset token:", resetToken);
-    console.log("Reset URL:", `http://localhost:3000/reset-password?token=${resetToken}`);
+    console.log("Mock Reset URL:", `http://localhost:3000/reset-password?token=${resetToken}`);
 
-    res.json({ 
-      message: "If the email exists, a reset link has been sent",
-      // Remove this in production - only for development
-      resetToken: resetToken 
+    // Send mock response
+    res.json({
+      success: true,
+      message: "Mock reset link generated",
+      resetToken,
     });
   } catch (error) {
     console.error("Forgot password error:", error);

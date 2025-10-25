@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 
 export default function Cart() {
   const [cartItems, setCartItems] = useState([]);
+  const [showClearConfirm, setShowClearConfirm] = useState(false);
+  const [itemToDelete, setItemToDelete] = useState(null);
   const navigate = useNavigate();
 
   // Get current user
@@ -74,12 +76,11 @@ export default function Cart() {
   };
 
   const clearCart = () => {
-    if (window.confirm("Are you sure you want to clear your cart?")) {
-      const cartKey = getCartKey();
-      localStorage.removeItem(cartKey);
-      setCartItems([]);
-    }
-  };
+    const cartKey = getCartKey();
+    localStorage.removeItem(cartKey);
+    setCartItems([]);
+    setShowClearConfirm(false);
+};
 
   const calculateTotal = () => {
     return cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
@@ -106,9 +107,26 @@ export default function Cart() {
       <div style={{ maxWidth: "900px", margin: "0 auto" }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.5rem" }}>
           <h1>Shopping Cart</h1>
-          <button className="btn" onClick={clearCart} style={{ background: "#dc3545", color: "white" }}>
+          
+          <button
+            className="btn"
+            style={{ background: "#dc3545", color: "white" }}
+            onClick={() => setShowClearConfirm(true)}
+          >
             Clear Cart
           </button>
+
+          {showClearConfirm && (
+            <div className="confirm-overlay">
+              <div className="confirm-box">
+                <p>Are you sure you want to clear your entire cart?</p>
+                <div className="confirm-buttons">
+                  <button className="confirm-yes" onClick={clearCart}>Yes, clear it</button>
+                  <button className="confirm-no" onClick={() => setShowClearConfirm(false)}>Cancel</button>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
 
         <div className="cart-items">
@@ -155,8 +173,8 @@ export default function Cart() {
 
                 <button
                   className="btn-remove"
-                  onClick={() => removeItem(item.id)}
                   aria-label="Remove item"
+                  onClick={() => setItemToDelete(item)}
                 >
                   Remove
                 </button>
@@ -164,6 +182,31 @@ export default function Cart() {
             </div>
           ))}
         </div>
+
+        {itemToDelete && (
+          <div className="confirm-overlay">
+            <div className="confirm-box">
+              <p>Remove "{itemToDelete.name}" from your cart?</p>
+              <div className="confirm-buttons">
+                <button
+                  className="confirm-yes"
+                  onClick={() => {
+                    removeItem(itemToDelete.id);
+                    setItemToDelete(null);
+                  }}
+                >
+                  Yes, remove
+                </button>
+                <button
+                  className="confirm-no"
+                  onClick={() => setItemToDelete(null)}
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
 
         <div className="cart-summary">
           <div className="cart-total">

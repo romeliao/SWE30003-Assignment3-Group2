@@ -61,5 +61,94 @@
     "createdAt": "2025-10-24T00:05:04.173Z",
     "updatedAt": "2025-10-24T00:22:19.739Z",
     "updatedBy": "jerome.liao2003@gmail.com"
+  },
+  {
+    "id": "1761370141040",
+    "customerId": "1761369999395",
+    "customerEmail": "hmm@gmai.com",
+    "items": [
+      {
+        "productId": "1761102721338",
+        "productName": "Eggs",
+        "price": 6,
+        "quantity": 10,
+        "subtotal": 60
+      },
+      {
+        "productId": "1761102745930",
+        "productName": "Butter",
+        "price": 4,
+        "quantity": 4,
+        "subtotal": 16
+      },
+      {
+        "productId": "1761102658887",
+        "productName": "Bread",
+        "price": 4,
+        "quantity": 1,
+        "subtotal": 4
+      }
+    ],
+    "totalAmount": 80,
+    "shippingAddress": "Street, Melbourne, 3000",
+    "paymentMethod": "Credit Card",
+    "status": "completed",
+    "createdAt": "2025-10-25T05:29:01.040Z",
+    "updatedAt": "2025-10-25T05:29:01.040Z"
+  },
+  {
+    "id": "1761374416404",
+    "customerId": "1761369999395",
+    "customerEmail": "hmm@gmai.com",
+    "items": [
+      {
+        "productId": "1761106210197",
+        "productName": "Dog Food",
+        "price": 25,
+        "quantity": 1,
+        "subtotal": 25
+      },
+      {
+        "productId": "1761108426934",
+        "productName": "Yogurt",
+        "price": 3.2,
+        "quantity": 1,
+        "subtotal": 3.2
+      },
+      {
+        "productId": "1761273169932",
+        "productName": "Power Bank",
+        "price": 26,
+        "quantity": 1,
+        "subtotal": 26
+      },
+      {
+        "productId": "1761273094579",
+        "productName": "Band-Aids",
+        "price": 3.4,
+        "quantity": 2,
+        "subtotal": 6.8
+      },
+      {
+        "productId": "1761272952550",
+        "productName": "Canned Tuna",
+        "price": 5,
+        "quantity": 1,
+        "subtotal": 5
+      },
+      {
+        "productId": "1761265750270",
+        "productName": "Frozen Vegetables ",
+        "price": 6,
+        "quantity": 1,
+        "subtotal": 6
+      }
+    ],
+    "totalAmount": 72,
+    "shippingAddress": "2, 1, 1",
+    "paymentMethod": "Credit Card",
+    "status": "completed",
+    "createdAt": "2025-10-25T06:40:16.404Z",
+    "updatedAt": "2025-10-25T06:40:16.404Z"
   }
 ]
